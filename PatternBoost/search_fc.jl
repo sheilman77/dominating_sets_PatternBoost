@@ -8,7 +8,17 @@ using Printf
 using Plots
 using Combinatorics
 using Dates
-using JSON 
+using JSON
+
+println("ARGS = ", ARGS)
+
+write_path = ARGS[1]
+nb_local_searches = parse(Int,ARGS[2]) 
+num_initial_empty_objects = parse(Int,ARGS[3])
+final_database_size = parse(Int,ARGS[4])
+target_db_size = parse(Int,ARGS[5])
+global N = parse(Int,ARGS[6])  # length of Prufer code
+println("Using N = $N")
 
 # Choose the problem to work on here!
 
@@ -16,7 +26,7 @@ using JSON
 #include("../problem_erdos_6.0Big.jl") 
 #include("../problem_erdos_NoLocal.jl")
 #include("../problem_erdos_NoPath.jl")
-include("problem_dom_ggpt.jl")
+include("problem_dom.jl")
 
 #must use "Big" version if N >= 66
 
@@ -387,11 +397,8 @@ function main()
 end
 
 
-write_path = ARGS[1]
-nb_local_searches = parse(Int,ARGS[2]) 
-num_initial_empty_objects = parse(Int,ARGS[3])
-final_database_size = parse(Int,ARGS[4])
-target_db_size = parse(Int,ARGS[5])
+
+
 main()
 
 

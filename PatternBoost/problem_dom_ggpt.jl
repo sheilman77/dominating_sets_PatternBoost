@@ -7,7 +7,6 @@ using Random
 # N is the number of vertices. 
 # WARNING: Since we are using Brute Force O(2^N), N must be small (<= 20).
 # N=50 is impossible for brute force. I have set it to 12 for testing.
-const N = 15
 
 const alpha = 1/2
 const beta  = 1

@@ -8,7 +8,6 @@ using JSON
 using Polynomials
 using DataStructures
 using Random
-const N = 50 #length of prufer code
 #We will look for the breakage at alpha*n - beta
 const alpha =  1/2
 const beta  = 1
