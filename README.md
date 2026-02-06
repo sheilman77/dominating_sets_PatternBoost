@@ -7,6 +7,12 @@ The Patternboost algorithm alternates between a greedy local search and transfor
 
 For more detail on Patternboost itself, see e.g. https://github.com/zawagner22/transformers_math_experiments
 
+## Notes on the Julia Files
+- problem_dom.jl
+Given a tree, compute the number of dominating sets of each size, and determine if the resulting sequence is log-concave
+- problem_dom_ggpt.jl
+Given a graph, computer the number of dominating sets of each size, and determine if the resulting sequence is log-concave
+
 ## Installation
 Prerequisites
 * Python 3.13.9 (with standard packages)
