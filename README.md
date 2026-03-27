@@ -8,10 +8,8 @@ The Patternboost algorithm alternates between a greedy local search and transfor
 For more detail on Patternboost itself, see e.g. https://github.com/zawagner22/transformers_math_experiments
 
 ## Notes on the Julia Files
-- problem_dom.jl
-Given a tree, compute the number of dominating sets of each size, and determine if the resulting sequence is log-concave.  In this file, a tree is represented as a Prufer code, i.e. a list of integers.
-- problem_dom_ggpt.jl
-Given a graph, computer the number of dominating sets of each size, and determine if the resulting sequence is log-concave.  In this file, a graph is represented as a list of binaries corresponding to (one half of the) off diagonal elements of the adjacency matrix of the graph.
+- problem_dom.jl   Given a tree, compute the number of dominating sets of each size, and determine if the resulting sequence is log-concave.  In this file, a tree is represented as a Prufer code, i.e. a list of integers.
+- problem_dom_ggpt.jl   Given a graph, computer the number of dominating sets of each size, and determine if the resulting sequence is log-concave.  In this file, a graph is represented as a list of binaries corresponding to (one half of the) off diagonal elements of the adjacency matrix of the graph.
 
 ## Installation
 Prerequisites
