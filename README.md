@@ -9,9 +9,9 @@ For more detail on Patternboost itself, see e.g. https://github.com/zawagner22/t
 
 ## Notes on the Julia Files
 - problem_dom.jl
-Given a tree, compute the number of dominating sets of each size, and determine if the resulting sequence is log-concave
+Given a tree, compute the number of dominating sets of each size, and determine if the resulting sequence is log-concave.  In this file, a tree is represented as a Prufer code, i.e. a list of integers.
 - problem_dom_ggpt.jl
-Given a graph, computer the number of dominating sets of each size, and determine if the resulting sequence is log-concave
+Given a graph, computer the number of dominating sets of each size, and determine if the resulting sequence is log-concave.  In this file, a graph is represented as a list of binaries corresponding to (one half of the) off diagonal elements of the adjacency matrix of the graph.
 
 ## Installation
 Prerequisites
@@ -35,7 +35,11 @@ You can change the problem by changing the relevant line in `search_fc.jl` to ca
 
 ## Troubleshooting
 
-Patternboost will typically start to write files from its experiment after 5 or 10 minutes.  If you find that it is taking over an hour to write an files or show any output in the command line, something is probably wrong.  Also, a very common error is that a file such as `search_output_txt_1` does not exist.  This error occurs when there is a problem in the program such that the first output file is not written, so the program cannot proceed further (since the output file is empty).
+Patternboost will typically start to write files from its experiment after 5 or 10 minutes.  If you find that it is taking a long time (e.g. over an hour) to write any files or show any output in the command line, something is probably wrong.  
+
+A very common error is that a file such as `search_output_txt_1` does not exist.  This error occurs when there is a problem in the program such that the first output file is not written, so the program cannot proceed further (since the output file is empty).
+
+Another common error is setting the number of tokens to be too small, which can cause the program to stop running.
 
 ## Setup
 Clone the repository:
