@@ -242,46 +242,49 @@ def _dominating_polynomial_raw(graph):
     return dom_list
 
 
-def _plot_dom_poly_panel(ax, dom_stripped, ks):
+def _plot_dom_poly_panel(ax, dom_full, ks_full):
     """
     Plot the dominating polynomial as an annotated bar chart on *ax*.
 
     Parameters
     ----------
-    dom_stripped : list[int]
-        Polynomial coefficients with leading zeros already removed.
-        dom_stripped[i] = D(ks[i]) = number of dominating sets of size ks[i].
-    ks : list[int]
-        Dominating-set size corresponding to each coefficient.
-        len(ks) must equal len(dom_stripped).
+    dom_full : list[int]
+        Full polynomial coefficients (leading zeros already stripped).
+        dom_full[i] = D(ks_full[i]) = number of dominating sets of size ks_full[i].
+    ks_full : list[int]
+        Original dominating-set sizes corresponding to each coefficient.
+        Internal zeros are kept so that x-axis positions are always the true
+        k values; they are only excluded from the log-concavity computation.
 
     Colour coding
     -------------
     Blue : position satisfies log-concavity  (a_k^2 >= a_{k-1} * a_{k+1})
     Red  : position *breaks* log-concavity   (a_k^2 <  a_{k-1} * a_{k+1})
-           i.e. the bar at k is a "dip" relative to its two neighbours.
 
-    The violation delta  Δ = 2·ln(a_k) − ln(a_{k-1}) − ln(a_{k+1})  is
-    printed above each red bar (negative value confirms the violation).
+    The violation label 'k=X  Δ=...' is placed above each red bar.
+    ALL violation positions are flagged (the loop never stops early).
     """
-    vals = dom_stripped
-    n    = len(vals)
+    MAX_DISPLAY = 15   # cap bars shown to avoid x-axis overflow
 
-    # --- find log-concavity violations ---------------------------------------
-    # The scoring function compresses out zeros before checking triples, so a
-    # violation can span positions that are separated by zeros in the original
-    # polynomial.  We replicate that logic exactly: build a list of
-    # (original_index, value) for nonzero entries, check consecutive triples
-    # in that compressed list, then map back to original indices for colouring.
-    violation_delta = {}          # original_index j -> delta  (negative when violated)
-    nonzero_entries = [(j, v) for j, v in enumerate(vals) if v > 0]
+    # --- find ALL log-concavity violations on the FULL polynomial ------------
+    # Zeros are skipped in the compressed check (log(0) undefined), but the
+    # original index j is preserved so we can colour the right bar.
+    # All positions are tested — there is no early exit.
+    violation_delta = {}   # j (index into dom_full) -> delta  (negative)
+    nonzero_entries = [(j, v) for j, v in enumerate(dom_full) if v > 0]
     for pos in range(1, len(nonzero_entries) - 1):
         _, a = nonzero_entries[pos - 1]
         j, b = nonzero_entries[pos]
         _, c = nonzero_entries[pos + 1]
         delta = 2 * math.log(b) - math.log(a) - math.log(c)
         if delta < 0:
-            violation_delta[j] = delta
+            violation_delta[j] = delta   # store ALL violations
+
+    # --- truncate display to first MAX_DISPLAY coefficients ------------------
+    truncated = len(dom_full) > MAX_DISPLAY
+    vals = dom_full[:MAX_DISPLAY]
+    ks   = ks_full[:MAX_DISPLAY]
+    n    = len(vals)
 
     colors = ['#e74c3c' if j in violation_delta else '#3498db'
               for j in range(n)]
@@ -289,42 +292,48 @@ def _plot_dom_poly_panel(ax, dom_stripped, ks):
     bars = ax.bar(ks, vals, color=colors, edgecolor='white',
                   linewidth=0.5, width=0.7)
 
-    # --- bar-top count labels ------------------------------------------------
-    if n <= 30:
-        for bar, v in zip(bars, vals):
-            if v > 0:
-                ax.text(
-                    bar.get_x() + bar.get_width() / 2,
-                    bar.get_height() * 1.01,
-                    str(v),
-                    ha='center', va='bottom', fontsize=6.5,
-                )
-
-    # --- violation annotations (Δ value + arrow) -----------------------------
     ymax = max(vals) if any(v > 0 for v in vals) else 1
+
+    # --- bar-top count labels ------------------------------------------------
+    for bar, v in zip(bars, vals):
+        if v > 0:
+            ax.text(
+                bar.get_x() + bar.get_width() / 2,
+                bar.get_height() + ymax * 0.01,
+                str(v),
+                ha='center', va='bottom', fontsize=6.5,
+            )
+
+    # --- violation annotations: label above bar, NO arrow --------------------
+    # Placed well above the count label so they never overlap the bar itself.
+    # Each label shows the original k index explicitly.
     for j, delta in violation_delta.items():
-        ax.annotate(
-            f'Δ={delta:.3f}',
-            xy=(ks[j], vals[j]),
-            xytext=(0, 22),
-            textcoords='offset points',
-            ha='center', fontsize=7, color='#c0392b', fontweight='bold',
-            arrowprops=dict(arrowstyle='->', color='#c0392b', lw=1.0),
+        if j >= n:          # violation is beyond the displayed range
+            continue
+        label_y = vals[j] + ymax * 0.18
+        ax.text(
+            ks[j], label_y,
+            f'k={ks[j]}\nΔ={delta:.3f}',
+            ha='center', va='bottom',
+            fontsize=7, color='#c0392b', fontweight='bold',
         )
 
     # --- axes formatting -----------------------------------------------------
-    ax.set_xlabel('Dominating-set size  k', fontsize=8)
-    ax.set_ylabel('D(k)  —  # dominating sets', fontsize=8)
-    ax.set_title(
+    title = (
         'Dominating polynomial'
         '   (red bar = log-concavity violation:  '
-        r'$a_k^2 < a_{k-1}\,a_{k+1}$)',
-        fontsize=8.5,
+        r'$a_k^2 < a_{k-1}\,a_{k+1}$)'
     )
+    if truncated:
+        title += f'\n(showing first {MAX_DISPLAY} of {len(dom_full)} coefficients)'
+
+    ax.set_xlabel('Dominating-set size  k', fontsize=8)
+    ax.set_ylabel('D(k)  —  # dominating sets', fontsize=8)
+    ax.set_title(title, fontsize=8.5)
     ax.tick_params(labelsize=7)
     ax.set_xticks(ks)
     ax.set_xlim(ks[0] - 0.8, ks[-1] + 0.8)
-    ax.set_ylim(0, ymax * 1.35)
+    ax.set_ylim(0, ymax * 1.50)
 
     from matplotlib.patches import Patch
     ax.legend(
@@ -335,7 +344,6 @@ def _plot_dom_poly_panel(ax, dom_stripped, ks):
         ],
         fontsize=7, loc='upper right',
     )
-
 
 def draw_and_save_graph(binary_code, img_path, score,
                         run_name, source_file, lineno,
