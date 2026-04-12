@@ -47,3 +47,12 @@ git clone https://github.com/sheilman77/dominating_sets_patternboost
 
 ## Contributing
 Feel free to explore other problems or propose extensions to the PatternBoost algorithm!
+
+## Examples of Graphs
+![asdf](https://github.com/sheilman77/dominating_sets_patternboost/blob/main/graph_examples/53590741__search_output_1__L1.png)
+![asdf](https://github.com/sheilman77/dominating_sets_patternboost/blob/main/planar_graph_examples/53590741__search_output_2__L35.png)
+![asdf](https://github.com/sheilman77/dominating_sets_patternboost/blob/main/graph_examples/53590741__search_output_2__L102.png)
+![asdf](https://github.com/sheilman77/dominating_sets_patternboost/blob/main/tree_examples/4405294__search_output_1__L3.png)
+![asdf](https://github.com/sheilman77/dominating_sets_patternboost/blob/main/tree_examples/44052941__search_output_2__L3.png)
+
+
